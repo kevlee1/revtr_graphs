@@ -6,11 +6,10 @@ from ripe.atlas.cousteau import ProbeRequest
 # list of ASes that have VP for a measurement platform
 # generating list of ASes that contain a VP for RIPE Atlas
 RIPE_LIST = []
-FILTERS = {"status": "1"}
-PROBES = ProbeRequest(**FILTERS)
-for probe in PROBES:
-    RIPE_LIST.append(str(probe["asn_v4"]))
-print(PROBES.total_count)
+with open('RIPE_LIST.txt') as fd:
+    for string in fd:
+        if string != 'None\n':
+            RIPE_LIST.append(string.rstrip('\n'))
 
 SPEEDCHECKER_LIST = []
 RR_RESPONSIVE_LIST = []
@@ -52,15 +51,11 @@ def generate_data(as_list, as_dictionary):
                 # the two lists
                 if set(curr_line) & set(as_list):
                     # if there is, update counters
-                    new_value = as_dictionary[length]
-                    new_value[0] = new_value[0] + 1
-                    new_value[1] = new_value[1] + 1
-                    as_dictionary[length] = new_value
+                    as_dictionary[length][0] = as_dictionary[length][0] + 1
+                    as_dictionary[length][1] = as_dictionary[length][1] + 1
                 # if there isn't, just increment the seen total
                 else:
-                    new_value = as_dictionary[length]
-                    new_value[0] = new_value[0] + 1
-                    as_dictionary[length] = new_value
+                    as_dictionary[length][0] = as_dictionary[length][0] + 1
             # if the length key needs to be added to the dictionary
             else:
                 if set(curr_line) & set(as_list):
@@ -72,6 +67,7 @@ generate_data(RIPE_LIST, CC_AS_RIPE)
 # ------- CLEAN UP DATA ---------
 PLOT_RIPE = {}
 for key in CC_AS_RIPE:
-    PLOT_RIPE[key] = 100 * float(CC_AS_RIPE[key][1]) / float(CC_AS_RIPE[key][0])
+    PLOT_RIPE[key] = round(100 * float(CC_AS_RIPE[key][1]) /
+                           float(CC_AS_RIPE[key][0]), 2)
 print(PLOT_RIPE)
 # ------- PLOT DATA -------

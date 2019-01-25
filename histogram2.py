@@ -27,6 +27,10 @@ with open('reachable_as_list.txt') as fd3:
     for num in fd3:
         RR_REACHABLE_LIST.append(int(num.rstrip('\n')))
 # ========================================================
+RIPE_RESPONSIVE_LIST = RIPE_LIST + RR_RESPONSIVE_LIST
+RIPE_REACHABLE_LIST = RIPE_LIST + RR_REACHABLE_LIST
+CC_RIPE_RESPONSIVE = {}
+CC_RIPE_REACHABLE = {}
 TS_LIST = []
 
 # dictionary to store AS-CustomerCone data
@@ -98,11 +102,11 @@ generate_cc_data()
 generate_data(RIPE_LIST, CC_RIPE)
 generate_data(RR_RESPONSIVE_LIST, CC_RR_RESPONSIVE)
 generate_data(RR_REACHABLE_LIST, CC_RR_REACHABLE)
+generate_data(RIPE_REACHABLE_LIST, CC_RIPE_REACHABLE)
+generate_data(RIPE_RESPONSIVE_LIST, CC_RIPE_RESPONSIVE)
 # ------- CLEAN UP DATA ---------
 # ========================================================
 RIPE_X_VALUES = list(CC_RIPE.keys())
-for value in RIPE_X_VALUES:
-    value = value
 RIPE_Y_VALUES = []
 for key in RIPE_X_VALUES:
     RIPE_Y_VALUES.append(CC_RIPE[key][0])
@@ -116,6 +120,18 @@ REACHABLE_X_VALUES = list(CC_RR_REACHABLE.keys())
 REACHABLE_Y_VALUES = []
 for key in REACHABLE_X_VALUES:
     REACHABLE_Y_VALUES.append(CC_RR_REACHABLE[key][0])
+
+RIPE_REACHABLE_X_VALUES = list(CC_RIPE_REACHABLE.keys())
+RIPE_REACHABLE_Y_VALUES = []
+for key in RIPE_REACHABLE_X_VALUES:
+    RIPE_REACHABLE_Y_VALUES.append(CC_RIPE_REACHABLE[key][0])
+
+# ========================================================
+RIPE_RESPONSIVE_X_VALUES = list(CC_RIPE_RESPONSIVE.keys())
+RIPE_RESPONSIVE_Y_VALUES = []
+for key in RIPE_RESPONSIVE_X_VALUES:
+    RIPE_RESPONSIVE_Y_VALUES.append(CC_RIPE_RESPONSIVE[key][0])
+
 # ------- PLOT DATA -------
 #plt.ylim(bottom=0)
 #plt.ylim(top=32000)
@@ -126,6 +142,10 @@ for key in REACHABLE_X_VALUES:
 plt.semilogx(RIPE_X_VALUES, RIPE_Y_VALUES, label="RIPE")
 plt.semilogx(RESPONSIVE_X_VALUES, RESPONSIVE_Y_VALUES, label="RR-RESPONSIVE")
 plt.semilogx(REACHABLE_X_VALUES, REACHABLE_Y_VALUES, label="RR-REACHABLE")
+plt.semilogx(RIPE_REACHABLE_X_VALUES, RIPE_REACHABLE_Y_VALUES,
+             label="RIPE-REACHABLE")
+plt.semilogx(RIPE_RESPONSIVE_X_VALUES, RIPE_RESPONSIVE_Y_VALUES,
+             label="RIPE-RESPONSIVE")
 #plt.bar(REACHABLE_X_VALUES, REACHABLE_Y_VALUES, width=1, color='g')
 # PLOTTING RESPONSIVE VALUES =============================
 #ax.bar(RESPONSIVE_X_VALUES, RESPONSIVE_Y_VALUES, width=w, color='g', label="RR-RESPONSIVE")
