@@ -9,18 +9,18 @@ import numpy as np
 # list of ASes that have VP for a measurement platform
 # generating list of ASes that contain a VP for RIPE Atlas
 # ========================================================
-RIPE_LIST = []
-with open('RIPE_LIST.txt') as fd:
-    for string in fd:
-        if string != 'None\n':
-            RIPE_LIST.append(int(string.rstrip('\n')))
+#RIPE_LIST = []
+#with open('RIPE_LIST.txt') as fd:
+#    for string in fd:
+#        if string != 'None\n':
+#            RIPE_LIST.append(int(string.rstrip('\n')))
 # ========================================================
 SPEEDCHECKER_LIST = []
 # ========================================================
-RR_RESPONSIVE_LIST = []
-with open('responsive_as_list.txt') as fd2:
-    for num in fd2:
-        RR_RESPONSIVE_LIST.append(int(num.rstrip('\n')))
+#RR_RESPONSIVE_LIST = []
+#with open('responsive_as_list.txt') as fd2:
+#    for num in fd2:
+#        RR_RESPONSIVE_LIST.append(int(num.rstrip('\n')))
 # ========================================================
 RR_REACHABLE_LIST = []
 with open('reachable_as_list.txt') as fd3:
@@ -70,72 +70,67 @@ def generate_data(as_list, as_dictionary):
         # covers all cases where there is already a customer cone size
         # in the dictionary
         if length == prev_cc_size:
-            as_dictionary[length][0].append(AS)
             if AS in as_list:
                 # if the AS is in the list of ASes to check for
                 # increment necessary values
+                as_dictionary[length][0] = as_dictionary[length][0] + 1
                 as_dictionary[length][1] = as_dictionary[length][1] + 1
-                as_dictionary[length][2] = as_dictionary[length][2] + 1
             else:
                 # else just increment the size of the set
-                as_dictionary[length][2] = as_dictionary[length][2] + 1
+                as_dictionary[length][1] = as_dictionary[length][1] + 1
         # if the length key needs to be added to the dictionary
         # covers all cases where customer cone size is max or less
         else:
             if prev_cc_size == 0:
-                intersection = len(set([AS]) & set(as_list))
-                as_dictionary[length] = [[AS], intersection, 1]
+                if AS in as_list:
+                    as_dictionary[length] = [1, 1]
+                else:
+                    as_dictionary[length] = [0, 1]
             else:
-                # check which keys (their as_set) needed to appended
-                # to this length (as_set)
-                # finished creating list of ASes
-                # for this minimum customer cone size
-                as_dictionary[length] = [[], 0, 0]
-                as_set = as_dictionary[prev_cc_size][0].copy()
-                as_dictionary[length][0] = as_set
-                as_dictionary[length][0].append(AS)
-                # count number of intersections between set of ASes
-                # for this minimum customer cone size and
-                # ASes of VPs in a certain platform
-                intersection_count = len(set(as_set) & set(as_list))
-                as_dictionary[length][1] = intersection_count
-                as_dictionary[length][2] = len(as_dictionary[length][0])
+                as_dictionary[length] = [0, 0]
+                if AS in as_list:
+                    as_dictionary[length][0] = as_dictionary[prev_cc_size][0]+1
+                    as_dictionary[length][1] = as_dictionary[prev_cc_size][1]+1
+                else:
+                    as_dictionary[length][0] = as_dictionary[prev_cc_size][0]+1
         prev_cc_size = length
 generate_cc_data()
-generate_data(RIPE_LIST, CC_RIPE)
-generate_data(RR_RESPONSIVE_LIST, CC_RR_RESPONSIVE)
+#generate_data(RIPE_LIST, CC_RIPE)
+#generate_data(RR_RESPONSIVE_LIST, CC_RR_RESPONSIVE)
 generate_data(RR_REACHABLE_LIST, CC_RR_REACHABLE)
 # ------- CLEAN UP DATA ---------
 # ========================================================
-RIPE_PLOT = {}
-RIPE_X_VALUES = list(RIPE_PLOT.keys())
-RIPE_Y_VALUES = []
-for key in RIPE_X_VALUES:
-    RIPE_Y_VALUES.append(RIPE_PLOT[key][1])
+#RIPE_X_VALUES = list(CC_RIPE.keys())
+#for value in RIPE_X_VALUES:
+#    value = value
+#RIPE_Y_VALUES = []
+#for key in RIPE_X_VALUES:
+#    RIPE_Y_VALUES.append(CC_RIPE[key][0])
 # ========================================================
-RESPONSIVE_PLOT = {}
-RESPONSIVE_X_VALUES = list(RESPONSIVE_PLOT.keys())
-RESPONSIVE_Y_VALUES = []
-for key in RESPONSIVE_X_VALUES:
-    RESPONSIVE_Y_VALUES.append(RESPONSIVE_PLOT[key][1])
+#RESPONSIVE_X_VALUES = list(CC_RR_RESPONSIVE.keys())
+#RESPONSIVE_Y_VALUES = []
+#for key in RESPONSIVE_X_VALUES:
+#    RESPONSIVE_Y_VALUES.append(CC_RR_RESPONSIVE[key][0])
 # ========================================================
-REACHABLE_PLOT = {}
-REACHABLE_X_VALUES = list(REACHABLE_PLOT.keys())
+REACHABLE_X_VALUES = list(CC_RR_REACHABLE.keys())
 REACHABLE_Y_VALUES = []
 for key in REACHABLE_X_VALUES:
-    REACHABLE_Y_VALUES.append(REACHABLE_PLOT[key][1])
+    REACHABLE_Y_VALUES.append(CC_RR_REACHABLE[key][0])
 # ------- PLOT DATA -------
+plt.ylim(bottom=0)
+plt.ylim(top=32000)
+plt.xlim(left=0)
+plt.xlim(right=len(list(REACHABLE_X_VALUES))+10)
+print(REACHABLE_Y_VALUES)
 # PLOTTING RIPE VALUES ===================================
-plt.semilogx(RIPE_X_VALUES, RIPE_Y_VALUES, label="RIPE")
+plt.bar(REACHABLE_X_VALUES, REACHABLE_Y_VALUES, width=1, color='g')
 # PLOTTING RESPONSIVE VALUES =============================
-plt.semilogx(RESPONSIVE_X_VALUES, RESPONSIVE_Y_VALUES, label="RR-RESPONSIVE")
+#ax.bar(RESPONSIVE_X_VALUES, RESPONSIVE_Y_VALUES, width=w, color='g', label="RR-RESPONSIVE")
 # PLOTTING REACHABLE VALUES =============================-
-plt.semilogx(REACHABLE_X_VALUES, REACHABLE_Y_VALUES, label="RR-REACHABLE")
+#ax.bar(REACHABLE_X_VALUES, REACHABLE_Y_VALUES, width=w, color='r', label="RR-REACHABLE")
 # PLOT INFORMATION =======================================
+plt.xticks([i for i in range(len(REACHABLE_X_VALUES))], REACHABLE_X_VALUES, rotation='90')
 plt.xlabel('Minimum Customer Cone Size')
 plt.ylabel('Number of ASes Intersecting')
-plt.ylim(top=100)
-plt.ylim(bottom=0)
-plt.yticks(np.arange(0, 101, 20))
-plt.legend()
+
 plt.show()
