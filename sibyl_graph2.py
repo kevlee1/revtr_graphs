@@ -16,6 +16,9 @@ with open('RIPE_LIST.txt') as fd:
             RIPE_LIST.append(int(string.rstrip('\n')))
 # ========================================================
 SPEEDCHECKER_LIST = []
+with open('speedchecker_as_list.txt') as fd0:
+    for num in fd0:
+        SPEEDCHECKER_LIST.append(int(num.rstrip('\n')))
 # ========================================================
 RR_RESPONSIVE_LIST = []
 with open('responsive_as_list.txt') as fd2:
@@ -32,6 +35,8 @@ RIPE_RESPONSIVE_LIST = RIPE_LIST + RR_RESPONSIVE_LIST
 RIPE_REACHABLE_LIST = RIPE_LIST + RR_REACHABLE_LIST
 CC_RIPE_RESPONSIVE = {}
 CC_RIPE_REACHABLE = {}
+ALL_LIST = RIPE_LIST + RR_RESPONSIVE_LIST + RR_REACHABLE_LIST + SPEEDCHECKER_LIST
+CC_ALL = {}
 
 # dictionary to store AS-CustomerCone data
 # key = customer cone size
@@ -111,6 +116,7 @@ generate_data(RR_RESPONSIVE_LIST, CC_RR_RESPONSIVE)
 generate_data(RR_REACHABLE_LIST, CC_RR_REACHABLE)
 generate_data(RIPE_REACHABLE_LIST, CC_RIPE_REACHABLE)
 generate_data(RIPE_RESPONSIVE_LIST, CC_RIPE_RESPONSIVE)
+generate_data(ALL_LIST, CC_ALL)
 # ------- CLEAN UP DATA ---------
 # ========================================================
 RIPE_PLOT = {}
@@ -156,16 +162,24 @@ RIPE_REACHABLE_X_VALUES = list(RIPE_REACHABLE_PLOT.keys())
 RIPE_REACHABLE_Y_VALUES = []
 for key in RIPE_REACHABLE_X_VALUES:
     RIPE_REACHABLE_Y_VALUES.append(RIPE_REACHABLE_PLOT[key])
+# =========================================================
+ALL_PLOT = {}
+for key in CC_ALL:
+    ALL_PLOT[key] = round(100 * CC_ALL[key][1] / CC_ALL[key][2], 2)
+ALL_X_VALUES = list(ALL_PLOT.keys())
+ALL_Y_VALUES = []
+for key in ALL_X_VALUES:
+    ALL_Y_VALUES.append(ALL_PLOT[key])
 # ------- PLOT DATA -------
-# PLOTTING RIPE VALUES ===================================
-plt.semilogx(RIPE_X_VALUES, RIPE_Y_VALUES, label="RIPE")
+plt.semilogx(ALL_X_VALUES, ALL_Y_VALUES, label="ALL PLATFORMS")
+plt.semilogx(RIPE_RESPONSIVE_X_VALUES, RIPE_RESPONSIVE_Y_VALUES, label="RIPE-RESPONSIVE")
+plt.semilogx(RIPE_REACHABLE_X_VALUES, RIPE_REACHABLE_Y_VALUES, label="RIPE-REACHABLE")
 # PLOTTING RESPONSIVE VALUES =============================
 plt.semilogx(RESPONSIVE_X_VALUES, RESPONSIVE_Y_VALUES, label="RR-RESPONSIVE")
 # PLOTTING REACHABLE VALUES =============================-
 plt.semilogx(REACHABLE_X_VALUES, REACHABLE_Y_VALUES, label="RR-REACHABLE")
-plt.semilogx(RIPE_RESPONSIVE_X_VALUES, RIPE_RESPONSIVE_Y_VALUES, label="RIPE-RESPONSIVE")
-# PLOTTING REACHABLE VALUES =============================-
-plt.semilogx(RIPE_REACHABLE_X_VALUES, RIPE_REACHABLE_Y_VALUES, label="RIPE-REACHABLE")
+# PLOTTING RIPE VALUES ===================================
+plt.semilogx(RIPE_X_VALUES, RIPE_Y_VALUES, label="RIPE")
 # PLOT INFORMATION =======================================
 plt.xlabel('Minimum Customer Cone Size')
 plt.ylabel('% of ASes Hosting Vantage Points')

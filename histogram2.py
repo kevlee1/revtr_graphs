@@ -16,6 +16,9 @@ with open('RIPE_LIST.txt') as fd:
             RIPE_LIST.append(int(string.rstrip('\n')))
 # ========================================================
 SPEEDCHECKER_LIST = []
+with open('speechecker_as_list.txt') as fd0:
+    for num in fd0:
+        SPEEDCHECKER_LIST.append(int(num.rstrip('\n')))
 # ========================================================
 RR_RESPONSIVE_LIST = []
 with open('responsive_as_list.txt') as fd2:
@@ -104,6 +107,7 @@ generate_data(RR_RESPONSIVE_LIST, CC_RR_RESPONSIVE)
 generate_data(RR_REACHABLE_LIST, CC_RR_REACHABLE)
 generate_data(RIPE_REACHABLE_LIST, CC_RIPE_REACHABLE)
 generate_data(RIPE_RESPONSIVE_LIST, CC_RIPE_RESPONSIVE)
+generate_data(SPEEDCHECKER_LIST, CC_SPEEDCHECKER)
 # ------- CLEAN UP DATA ---------
 # ========================================================
 RIPE_X_VALUES = list(CC_RIPE.keys())
