@@ -16,6 +16,9 @@ with open('RIPE_LIST.txt') as fd:
             RIPE_LIST.append(int(string.rstrip('\n')))
 # ========================================================
 SPEEDCHECKER_LIST = []
+with open('speedchecker_as_list.txt') as fd0:
+    for num in fd0:
+        SPEEDCHECKER_LIST.append(int(num.rstrip('\n')))
 # ========================================================
 RR_RESPONSIVE_LIST = []
 with open('responsive_as_list.txt') as fd2:
@@ -105,6 +108,7 @@ generate_cc_data()
 generate_data(RIPE_LIST, CC_RIPE)
 generate_data(RR_RESPONSIVE_LIST, CC_RR_RESPONSIVE)
 generate_data(RR_REACHABLE_LIST, CC_RR_REACHABLE)
+generate_data(SPEEDCHECKER_LIST, CC_SPEEDCHECKER)
 # ------- CLEAN UP DATA ---------
 # ========================================================
 RIPE_PLOT = {}
@@ -132,13 +136,24 @@ REACHABLE_X_VALUES = list(REACHABLE_PLOT.keys())
 REACHABLE_Y_VALUES = []
 for key in REACHABLE_X_VALUES:
     REACHABLE_Y_VALUES.append(REACHABLE_PLOT[key])
+# ========================================================
+SPEEDCHECKER_PLOT = {}
+for key in CC_SPEEDCHECKER:
+    SPEEDCHECKER_PLOT[key] = round(100 * CC_SPEEDCHECKER[key][1] /
+                                   CC_SPEEDCHECKER[key][2], 2)
+    SPEEDCHECKER_X_VALUES = list(SPEEDCHECKER_PLOT.keys())
+    SPEEDCHECKER_Y_VALUES = []
+for key in SPEEDCHECKER_X_VALUES:
+    SPEEDCHECKER_Y_VALUES.append(SPEEDCHECKER_PLOT[key])
 # ------- PLOT DATA -------
-# PLOTTING RIPE VALUES ===================================
-plt.semilogx(RIPE_X_VALUES, RIPE_Y_VALUES, label="RIPE")
 # PLOTTING RESPONSIVE VALUES =============================
 plt.semilogx(RESPONSIVE_X_VALUES, RESPONSIVE_Y_VALUES, label="RR-RESPONSIVE")
 # PLOTTING REACHABLE VALUES =============================-
 plt.semilogx(REACHABLE_X_VALUES, REACHABLE_Y_VALUES, label="RR-REACHABLE")
+# PLOTTING SPEEDCHECKER VALUES ===========================
+plt.semilogx(SPEEDCHECKER_X_VALUES, SPEEDCHECKER_Y_VALUES, label="SPEEDCHECKER")
+# PLOTTING RIPE VALUES ===================================
+plt.semilogx(RIPE_X_VALUES, RIPE_Y_VALUES, label="RIPE")
 # PLOT INFORMATION =======================================
 plt.xlabel('Minimum Customer Cone Size')
 plt.ylabel('% of ASes Hosting Vantage Points')
