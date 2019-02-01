@@ -37,6 +37,8 @@ CC_RIPE_RESPONSIVE = {}
 CC_RIPE_REACHABLE = {}
 ALL_LIST = RIPE_LIST + RR_RESPONSIVE_LIST + RR_REACHABLE_LIST + SPEEDCHECKER_LIST
 CC_ALL = {}
+RIPE_SPEEDCHECKER_LIST = SPEEDCHECKER_LIST + RIPE_LIST
+CC_RIPE_SPEEDCHECKER = {}
 
 # dictionary to store AS-CustomerCone data
 # key = customer cone size
@@ -117,6 +119,8 @@ generate_data(RR_REACHABLE_LIST, CC_RR_REACHABLE)
 generate_data(RIPE_REACHABLE_LIST, CC_RIPE_REACHABLE)
 generate_data(RIPE_RESPONSIVE_LIST, CC_RIPE_RESPONSIVE)
 generate_data(ALL_LIST, CC_ALL)
+generate_data(SPEEDCHECKER_LIST, CC_SPEEDCHECKER)
+generate_data(RIPE_SPEEDCHECKER_LIST, CC_RIPE_SPEEDCHECKER)
 # ------- CLEAN UP DATA ---------
 # ========================================================
 RIPE_PLOT = {}
@@ -170,14 +174,38 @@ ALL_X_VALUES = list(ALL_PLOT.keys())
 ALL_Y_VALUES = []
 for key in ALL_X_VALUES:
     ALL_Y_VALUES.append(ALL_PLOT[key])
+# =========================================================
+SPEEDCHECKER_PLOT = {}
+for key in CC_SPEEDCHECKER:
+    SPEEDCHECKER_PLOT[key] = round(100 * CC_SPEEDCHECKER[key][1] /
+                                   CC_SPEEDCHECKER[key][2], 2)
+SPEEDCHECKER_X_VALUES = list(SPEEDCHECKER_PLOT.keys())
+SPEEDCHECKER_Y_VALUES = []
+for key in SPEEDCHECKER_X_VALUES:
+    SPEEDCHECKER_Y_VALUES.append(SPEEDCHECKER_PLOT[key])
+# =========================================================
+RIPE_SPEEDCHECKER_PLOT = {}
+for key in CC_RIPE_SPEEDCHECKER:
+    RIPE_SPEEDCHECKER_PLOT[key] = round(100 * CC_RIPE_SPEEDCHECKER[key][1] /
+                                        CC_RIPE_SPEEDCHECKER[key][2], 2)
+RIPE_SPEEDCHECKER_X_VALUES = list(RIPE_SPEEDCHECKER_PLOT.keys())
+RIPE_SPEEDCHECKER_Y_VALUES = []
+for key in RIPE_SPEEDCHECKER_X_VALUES:
+    RIPE_SPEEDCHECKER_Y_VALUES.append(RIPE_SPEEDCHECKER_PLOT[key])
 # ------- PLOT DATA -------
 plt.semilogx(ALL_X_VALUES, ALL_Y_VALUES, label="ALL PLATFORMS")
-plt.semilogx(RIPE_RESPONSIVE_X_VALUES, RIPE_RESPONSIVE_Y_VALUES, label="RIPE-RESPONSIVE")
-plt.semilogx(RIPE_REACHABLE_X_VALUES, RIPE_REACHABLE_Y_VALUES, label="RIPE-REACHABLE")
+plt.semilogx(RIPE_RESPONSIVE_X_VALUES, RIPE_RESPONSIVE_Y_VALUES, label="RIPE + RR-RESPONSIVE")
 # PLOTTING RESPONSIVE VALUES =============================
 plt.semilogx(RESPONSIVE_X_VALUES, RESPONSIVE_Y_VALUES, label="RR-RESPONSIVE")
+plt.semilogx(RIPE_REACHABLE_X_VALUES, RIPE_REACHABLE_Y_VALUES,
+             label="RIPE + RR-REACHABLE")
 # PLOTTING REACHABLE VALUES =============================-
 plt.semilogx(REACHABLE_X_VALUES, REACHABLE_Y_VALUES, label="RR-REACHABLE")
+# PLOTTING RIPE_SPEEDCHECKER VALUES ======================
+plt.semilogx(RIPE_SPEEDCHECKER_X_VALUES, RIPE_SPEEDCHECKER_Y_VALUES,
+             label="RIPE + SPEEDCHECKER")
+# PLOTTING SPEEDCHECKER VALUES ===========================
+plt.semilogx(SPEEDCHECKER_X_VALUES, SPEEDCHECKER_Y_VALUES, label="SPEEDCHECKER")
 # PLOTTING RIPE VALUES ===================================
 plt.semilogx(RIPE_X_VALUES, RIPE_Y_VALUES, label="RIPE")
 # PLOT INFORMATION =======================================
